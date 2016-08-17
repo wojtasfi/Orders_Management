@@ -1,4 +1,5 @@
 package gui;
+
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -6,39 +7,40 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.ButtonModel;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
+import model.Database;
+
 public class FormPanel extends JPanel {
 
-	private JLabel nameLabel;
-	private JLabel occupationLabel;
-	private JTextField nameField;
-	private JTextField occupationField;
+	private JLabel clientLabel;
+	private JLabel productLabel;
+	private JLabel deadlineLabel;
+	private JLabel amountLabel;
+
+	private JComboBox clientCombo;
+	private JComboBox<String> productCombo;
+	private JTextField amountField;
+	private JTextField deadlineField;
+
 	private JButton okBtn;
 	private FormListener formListener;
-	private JList ageList;
-	private JComboBox empCombo;
-	private JCheckBox citizenCheck;
-	private JTextField taxField;
-	private JLabel taxLabel;
 
-	private JRadioButton maleRadio;
-	private JRadioButton femaleRadio;
-	private ButtonGroup genderGroup;
+	Connection con;
+	Statement st;
+	ResultSet rs;
 
 	public FormPanel() {
 		Dimension dim = getPreferredSize();
@@ -46,94 +48,76 @@ public class FormPanel extends JPanel {
 		setPreferredSize(dim);
 		setMinimumSize(dim);
 
-		nameLabel = new JLabel("Name");
-		occupationLabel = new JLabel("Occupaton");
-		nameField = new JTextField(10);
-		occupationField = new JTextField(10);
-		ageList = new JList();
-		empCombo = new JComboBox();
-		citizenCheck = new JCheckBox();
-		taxField = new JTextField(10);
-		taxLabel = new JLabel("Tax ID: ");
+		clientLabel = new JLabel("Client");
+		productLabel = new JLabel("Product");
+		deadlineLabel = new JLabel("Deadline: ");
+		amountLabel = new JLabel("Amount: ");
 
-		maleRadio = new JRadioButton("male");
-		femaleRadio = new JRadioButton("female");
-		maleRadio.setActionCommand("male"); //I retrive that 
-		femaleRadio.setActionCommand("female");
-		genderGroup = new ButtonGroup();
-		
-		maleRadio.setSelected(true);
+		clientCombo = new JComboBox();
+		amountField = new JTextField(10);
+		productCombo = new JComboBox<String>();
+		deadlineField = new JTextField(10);
+
 		okBtn = new JButton("OK");
-		
-		
-		//Set up mnemonics
+
+		// Set up mnemonics
 		okBtn.setMnemonic(KeyEvent.VK_O);
+
+		clientLabel.setDisplayedMnemonic(KeyEvent.VK_N);
+		clientLabel.setLabelFor(clientCombo); // Assigning label to the
+												// TextField
+
+		productLabel.setDisplayedMnemonic(KeyEvent.VK_C);
+		productLabel.setLabelFor(productCombo);
 		
-		nameLabel.setDisplayedMnemonic(KeyEvent.VK_N);
-		nameLabel.setLabelFor(nameField); //Assigning label to the TextField
 		
-		occupationLabel.setDisplayedMnemonic(KeyEvent.VK_C);
-		occupationLabel.setLabelFor(occupationField);
+		
+		//Adding values to combobox
+		
 
-		// Set up gender radios
-
-		genderGroup.add(maleRadio);
-		genderGroup.add(femaleRadio);
-
-		// Set up tax ID
-		taxLabel.setEnabled(false);
-		taxField.setEnabled(false);
-
-		citizenCheck.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				boolean isTicked = citizenCheck.isSelected();
-				taxLabel.setEnabled(isTicked);
-				taxField.setEnabled(isTicked);
-
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			String Url = "jdbc:mysql://localhost:3306/OrdersManagement";
+			con = DriverManager.getConnection(Url, "root", "pollop123");
+			st = con.createStatement();
+			String s = "select * from Products";
+			rs = st.executeQuery(s);
+			while (rs.next()) {
+				productCombo.addItem(rs.getString("Name"));
 			}
-
-		});
-
-		// Set up List
-		DefaultListModel ageModel = new DefaultListModel();
-		ageModel.addElement(new AgeCategory(0, "Under 18"));
-		ageModel.addElement(new AgeCategory(1, "18 to 65"));
-		ageModel.addElement(new AgeCategory(2, "65 or over"));
-
-		ageList.setModel(ageModel);
-		ageList.setPreferredSize(new Dimension(110, 70));
-		ageList.setBorder(BorderFactory.createEtchedBorder());
-		ageList.setSelectedIndex(1);
-
-		// Set up ComboBox
-
-		DefaultComboBoxModel empModel = new DefaultComboBoxModel();
-		empModel.addElement("employed");
-		empModel.addElement("self-employed");
-		empModel.addElement("unemployed");
-
-		empCombo.setModel(empModel);
-		empCombo.setSelectedIndex(0);
-		empCombo.setEditable(true);
-
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "ERROR");
+		} finally {
+			try {
+				st.close();
+				rs.close();
+				con.close();
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(null, "ERROR CLOSE");
+			}
+		}
 		
+		
+
+		//productCombo.setSelectedIndex(0);
+		productCombo.setEditable(false);
 
 		okBtn.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String name = nameField.getText();
-				String occupation = occupationField.getText();
-				AgeCategory ageCat = (AgeCategory) ageList.getSelectedValue();
-				String empCat = (String) empCombo.getSelectedItem();
-				String taxId = taxField.getText();
-				boolean usCitizen = citizenCheck.isSelected();
-				String gender = genderGroup.getSelection().getActionCommand(); //wazne zapamietac
-				
+				String client = (String) clientCombo.getSelectedItem();
+				String amount = amountField.getText();
+				String prodCat = (String) productCombo.getSelectedItem();
+				String deadline = deadlineField.getText();
 
-				FormEvent ev = new FormEvent(this, name, occupation, ageCat.getId(), empCat, taxId, usCitizen, gender);
+				FormEvent ev = new FormEvent(this, client, amount, prodCat, deadline);
 
 				if (formListener != null) { // is set
 					formListener.formEventOccured(ev);
@@ -174,14 +158,14 @@ public class FormPanel extends JPanel {
 		gc.fill = GridBagConstraints.NONE;
 		gc.anchor = GridBagConstraints.LINE_END;
 		gc.insets = new Insets(0, 0, 0, 5);
-		add(nameLabel, gc);
+		add(clientLabel, gc);
 
 		// cell to the left
 		gc.gridx = 1;
 		gc.gridy = 0;
 		gc.anchor = GridBagConstraints.LINE_START;
 		gc.insets = new Insets(0, 0, 0, 0);
-		add(nameField, gc);
+		add(clientCombo, gc);
 
 		///////////////////// Next row///////////////////
 		gc.gridy++;
@@ -192,13 +176,13 @@ public class FormPanel extends JPanel {
 		gc.weighty = 0.1;
 		gc.anchor = GridBagConstraints.LINE_END;
 		gc.insets = new Insets(0, 0, 0, 5);
-		add(occupationLabel, gc);
+		add(productLabel, gc);
 
 		gc.gridx = 1;
 		gc.gridy = 1;
 		gc.anchor = GridBagConstraints.LINE_START;
 		gc.insets = new Insets(0, 0, 0, 0);
-		add(occupationField, gc);
+		add(productCombo, gc);
 
 		///////////////////// Next row///////////////////
 		gc.gridy++;
@@ -209,12 +193,12 @@ public class FormPanel extends JPanel {
 		gc.gridx = 0;
 		gc.anchor = GridBagConstraints.FIRST_LINE_END;
 		gc.insets = new Insets(0, 0, 0, 5);
-		add(new JLabel("Age"), gc);
+		add(amountLabel, gc);
 
 		gc.gridx = 1;
 		gc.insets = new Insets(0, 0, 0, 0);
 		gc.anchor = GridBagConstraints.FIRST_LINE_START;
-		add(ageList, gc);
+		add(amountField, gc);
 
 		///////////////////// Next row///////////////////
 		gc.gridy++;
@@ -225,72 +209,12 @@ public class FormPanel extends JPanel {
 		gc.gridx = 0;
 		gc.anchor = GridBagConstraints.FIRST_LINE_END;
 		gc.insets = new Insets(0, 0, 0, 5);
-		add(new JLabel("Employment"), gc);
+		add(deadlineLabel, gc);
 
 		gc.gridx = 1;
 		gc.anchor = GridBagConstraints.FIRST_LINE_START;
 		gc.insets = new Insets(0, 0, 0, 0);
-		add(empCombo, gc);
-
-		///////////////////// Next row///////////////////
-		gc.gridy++;
-
-		gc.weightx = 1;
-		gc.weighty = 0.2;
-
-		gc.gridx = 0;
-		gc.anchor = GridBagConstraints.FIRST_LINE_END;
-		gc.insets = new Insets(0, 0, 0, 5);
-		add(new JLabel("US Citizen"), gc);
-
-		gc.gridx = 1;
-		gc.anchor = GridBagConstraints.FIRST_LINE_START;
-		gc.insets = new Insets(0, 0, 0, 0);
-		add(citizenCheck, gc);
-
-		///////////////////// Next row///////////////////
-		gc.gridy++;
-
-		gc.weightx = 1;
-		gc.weighty = 0.2;
-
-		gc.gridx = 0;
-		gc.anchor = GridBagConstraints.FIRST_LINE_END;
-		gc.insets = new Insets(0, 0, 0, 5);
-		add(taxLabel, gc);
-
-		gc.gridx = 1;
-		gc.anchor = GridBagConstraints.FIRST_LINE_START;
-		gc.insets = new Insets(0, 0, 0, 0);
-		add(taxField, gc);
-
-		///////////////////// Next row///////////////////
-		gc.gridy++;
-
-		gc.weightx = 1;
-		gc.weighty = 0.05;
-		
-
-		gc.gridx = 0;
-		gc.anchor = GridBagConstraints.LINE_END;
-		gc.insets = new Insets(0, 0, 0, 5);
-		add(new JLabel("Gender: "), gc);
-
-		gc.gridx = 1;
-		gc.anchor = GridBagConstraints.FIRST_LINE_START;
-		gc.insets = new Insets(0, 0, 0, 0);
-		add(maleRadio, gc);
-
-		///////////////////// Next row///////////////////
-		gc.gridy++;
-
-		gc.weightx = 1;
-		gc.weighty = 0.2;
-		gc.insets = new Insets(0, 0, 0, 0);
-
-		gc.gridx = 1;
-		gc.anchor = GridBagConstraints.FIRST_LINE_START;
-		add(femaleRadio, gc);
+		add(deadlineField, gc);
 
 		///////////////////// Next row///////////////////
 		gc.gridy++;

@@ -71,7 +71,7 @@ public class Database {
 			throw new Exception("Driver not found");
 		}
 
-		String Url = "jdbc:mysql://localhost:3306/swingtest";
+		String Url = "jdbc:mysql://localhost:3306/OrdersManagement";
 		con = DriverManager.getConnection(Url, "root", "pollop123");
 
 
@@ -204,5 +204,9 @@ public class Database {
 	public void removePerson(int index) {
 		people.remove(index);
 
+	}
+	
+	public Connection getCon(){
+		return con;
 	}
 }

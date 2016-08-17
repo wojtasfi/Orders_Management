@@ -43,7 +43,7 @@ public class FormEvent extends EventObject {
 		this.occupation = occupation;
 	}
 
-	public FormEvent(Object source) { //source object which raises the event
+	public FormEvent(Object source, String client, String amount, String prodCat, String deadline) { //source object which raises the event
 		super(source);
 		
 		
