@@ -30,8 +30,6 @@ public class MainFrame extends JFrame {
 
 	private static final long serialVersionUID = 3961290064342434261L;
 
-	private JButton btn;
-	private TextPanel textPanel;
 	private Toolbar toolbar;
 	private FormPanel formPanel;
 	private JFileChooser fileChooser;
@@ -45,8 +43,13 @@ public class MainFrame extends JFrame {
 
 	public MainFrame() {
 		super("Hello World");
+		
+		
+		Dimension dim = getPreferredSize();
+		dim.width = 800;
+		setPreferredSize(dim);
+		setMinimumSize(dim);
 
-		textPanel = new TextPanel();
 		toolbar = new Toolbar();
 		formPanel = new FormPanel();
 		fileChooser = new JFileChooser();
