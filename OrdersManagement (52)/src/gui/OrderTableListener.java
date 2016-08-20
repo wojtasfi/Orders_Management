@@ -1,6 +1,6 @@
 package gui;
 
-public interface PersonTableListener {
+public interface OrderTableListener {
 	public void rowDeleted(int row);
 
 }

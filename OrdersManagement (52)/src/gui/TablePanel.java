@@ -14,20 +14,21 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import model.Person;
+import model.Order;
+import model.Orders;
 
 public class TablePanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JTable table;
-	private PersonTableModel tableModel;
+	private OrderTableModel tableModel;
 	private JPopupMenu popup;
-	private PersonTableListener personTableListener;
+	private OrderTableListener personTableListener;
 	private Dimension dim;
 
 	public TablePanel() {
 
-		tableModel = new PersonTableModel();
+		tableModel = new OrderTableModel();
 		table = new JTable(tableModel);
 		popup = new JPopupMenu();
 		dim = new Dimension();
@@ -74,15 +75,15 @@ public class TablePanel extends JPanel {
 
 	}
 
-	public void setData(List<Person> db) {
-		tableModel.setData(db);
+	public void setData(List<Orders> list) {
+		tableModel.setData(list);
 	}
 
 	public void refresh() {
 		tableModel.fireTableDataChanged();
 	}
 
-	public void setPersonTableListener(PersonTableListener listener) {
+	public void setPersonTableListener(OrderTableListener listener) {
 		this.personTableListener = listener;
 	}
 

@@ -22,7 +22,9 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
 
 import org.jdatepicker.impl.JDatePanelImpl;
@@ -40,7 +42,8 @@ public class FormPanel extends JPanel {
 
 	private JComboBox<String> clientCombo;
 	private JComboBox<String> productCombo;
-	private JTextField amountField;
+	private SpinnerNumberModel spinnerModel;
+	private JSpinner amountSpinner;
 	private JTextField deadlineField;
 
 	private JDatePickerImpl datePicker;
@@ -54,7 +57,7 @@ public class FormPanel extends JPanel {
 
 	public FormPanel() {
 		Dimension dim = getPreferredSize();
-		dim.width = 400;
+		dim.width = 500;
 		setPreferredSize(dim);
 		setMinimumSize(dim);
 
@@ -64,9 +67,9 @@ public class FormPanel extends JPanel {
 		amountLabel = new JLabel("Amount: ");
 		orderLabel = new JLabel();
 
-		amountLabel.setText(null);
 		clientCombo = new JComboBox<String>();
-		amountField = new JTextField(10);
+		spinnerModel = new SpinnerNumberModel(0, 0, 9999, 1);
+		amountSpinner = new JSpinner(spinnerModel);
 		productCombo = new JComboBox<String>();
 		deadlineField = new JTextField(10);
 
@@ -189,11 +192,10 @@ public class FormPanel extends JPanel {
 
 					ResultSet set = stmt.executeQuery();
 					
-					String text = amountField.getText();
-					if (text != null) {
+					int amount = (int) amountSpinner.getValue();
+					if (amount != 0) {
 						while (set.next()) {
 							float price = set.getFloat(3);
-							int amount = Integer.parseInt(amountField.getText());
 							float value = price * amount;
 
 							orderLabel.setText("Price: " +  Integer.toString(set.getInt("Price")) + " \n" +
@@ -219,17 +221,29 @@ public class FormPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
+				//Tu muszę podzielić imię i nazwisko
 				String client = (String) clientCombo.getSelectedItem();
-				String amount = amountField.getText();
-				String prodCat = (String) productCombo.getSelectedItem();
-				String deadline = deadlineField.getText();
+				
+				String c_name = null;
+				c_name= client.substring(0, client.indexOf(" ")); 
+				
+				String c_surname = null;
+				if(client.contains(" ")){
+					c_surname= client.substring(client.indexOf(" ")+1,client.length()); 
+					}
+				
+				int amount = (int) amountSpinner.getValue();
+				String prod_name = (String) productCombo.getSelectedItem();
+				Date deadline = (Date) datePicker.getModel().getValue();
+				Object source = e.getSource();
 
-				FormEvent ev = new FormEvent(this, client, amount, prodCat, deadline);
+				
+				FormEvent ev = new FormEvent(source, c_name,c_surname, prod_name, amount, deadline);
 
 				if (formListener != null) { // is set
 					formListener.formEventOccured(ev);
 				}
-
 			}
 
 		});
@@ -311,7 +325,7 @@ public class FormPanel extends JPanel {
 		gc.gridx = 1;
 		gc.insets = new Insets(0, 0, 0, 0);
 		gc.anchor = GridBagConstraints.FIRST_LINE_START;
-		add(amountField, gc);
+		add(amountSpinner, gc);
 
 		///////////////////// Next row///////////////////
 		gc.gridy++;

@@ -10,6 +10,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.prefs.Preferences;
 
 import javax.swing.JButton;
@@ -46,7 +47,7 @@ public class MainFrame extends JFrame {
 		
 		
 		Dimension dim = getPreferredSize();
-		dim.width = 800;
+		dim.width = 1000;
 		setPreferredSize(dim);
 		setMinimumSize(dim);
 
@@ -73,7 +74,7 @@ public class MainFrame extends JFrame {
 		// This is important
 		pref = Preferences.userRoot().node("db");
 
-		tablePanel.setPersonTableListener(new PersonTableListener() {
+		tablePanel.setPersonTableListener(new OrderTableListener() {
 			public void rowDeleted(int row) {
 				controller.removePerson(row);
 			}
@@ -102,50 +103,34 @@ public class MainFrame extends JFrame {
 
 		setJMenuBar(createMenuBar());
 
-		toolbar.setToolbarListener(new ToolbarListener() {
-
-			@Override
-			public void saveEventOccured() {
-				try {
-					controller.connect();
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(MainFrame.this, "Cannot connect to database",
-							"Database connection problem", JOptionPane.ERROR_MESSAGE);
-				}
-
-				try {
-					controller.save();
-				} catch (SQLException e) {
-					JOptionPane.showMessageDialog(MainFrame.this, "Unable to save to database",
-							"Database connection problem", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-
-			@Override
-			public void refreshEventOccured() {
-				try {
-					controller.load();
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(MainFrame.this, "Unable to load from database",
-							"Database connection problem", JOptionPane.ERROR_MESSAGE);
-				}
-
-				tablePanel.refresh();
-
-			}
-
-		});
+		
 
 		formPanel.setFormListener(new FormListener() {
 
 			public void formEventOccured(FormEvent e) {
 				controller.addPerson(e);
+				try {
+					
+					//dodajemy order
+					controller.save();
+				} catch (SQLException | ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				try {
+					
+					//ale ładujemy już sql
+					controller.load();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				tablePanel.refresh();
 			}
 		});
 		setLayout(new BorderLayout());
 
-		add(toolbar, BorderLayout.PAGE_START);
 		add(splitPane, BorderLayout.CENTER);
 
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -229,42 +214,7 @@ public class MainFrame extends JFrame {
 
 		importDataItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
 
-		// IMPORT
-		importDataItem.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (fileChooser.showOpenDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
-					try {
-						controller.loadFromFile(fileChooser.getSelectedFile());
-						tablePanel.refresh();
-					} catch (IOException e1) {
-						JOptionPane.showMessageDialog(MainFrame.this, "Could not load data from file.", "Error",
-								JOptionPane.ERROR_MESSAGE);
-					}
-				}
-
-			}
-
-		});
-
-		// EXPORT
-		exportDataItem.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (fileChooser.showSaveDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
-					try {
-						controller.saveToFile(fileChooser.getSelectedFile());
-					} catch (IOException e1) {
-						JOptionPane.showMessageDialog(MainFrame.this, "Could not load data from file.", "Error",
-								JOptionPane.ERROR_MESSAGE);
-					}
-				}
-
-			}
-
-		});
+		
 
 		exitItem.addActionListener(new ActionListener() {
 
@@ -293,6 +243,13 @@ public class MainFrame extends JFrame {
 			}
 
 		});
+		
+		try {
+			controller.load();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return menuBar;
 

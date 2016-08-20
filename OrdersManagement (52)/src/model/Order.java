@@ -1,10 +1,8 @@
-package gui;
+package model;
 
-import java.awt.event.ActionListener;
 import java.util.Date;
-import java.util.EventObject;
 
-public class FormEvent extends EventObject {
+public class Order {
 
 	private String c_name;
 	private String c_surname;
@@ -20,7 +18,13 @@ public class FormEvent extends EventObject {
 		this.c_name = c_name;
 	}
 
+	public String getC_surname() {
+		return c_surname;
+	}
 
+	public void setC_surname(String c_surname) {
+		this.c_surname = c_surname;
+	}
 
 	public String getProd_name() {
 		return prod_name;
@@ -46,30 +50,14 @@ public class FormEvent extends EventObject {
 		this.deadline = deadline;
 	}
 
-	
 
-	public FormEvent(Object source, String c_name,String c_surname, String prod_name, int amount, Date deadline) {
-		super(source);
+
+	public Order(String c_name, String c_surname, String prod_name, int amount, Date deadline) {
+		super();
 		this.c_name = c_name;
 		this.c_surname = c_surname;
 		this.prod_name = prod_name;
 		this.amount = amount;
 		this.deadline = deadline;
 	}
-
-	public String getC_surname() {
-		return c_surname;
-	}
-
-	public void setC_surname(String c_surname) {
-		this.c_surname = c_surname;
-	}
-
-
-
-	
-
-
-
-	
 }

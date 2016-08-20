@@ -4,19 +4,21 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import model.Person;
+import model.Orders;
 
 
 //A way to represent data in table
-public class PersonTableModel extends AbstractTableModel {
+public class OrderTableModel extends AbstractTableModel {
 	
-	private List<Person> db;
+	private static final long serialVersionUID = 1L;
+
+	private List<Orders> db;
 	
-	private String[] colNames = {"ID", "Name", "Occupation", "Age Category", "Employment Category", "US Citizen", "Tax ID"};
+	private String[] colNames = {"Client name", "Client surname","Address", "Product","Price", "Quantity","Amount","Deadline" };
 	
 	
-	public void setData(List<Person> db){
-		this.db = db;
+	public void setData(List<Orders> list){
+		this.db = list;
 	}
 
 	@Override
@@ -28,7 +30,7 @@ public class PersonTableModel extends AbstractTableModel {
 	@Override
 	public int getColumnCount() {
 		// TODO Auto-generated method stub
-		return 7;
+		return 8;
 	}
 
 	@Override
@@ -39,26 +41,32 @@ public class PersonTableModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int row, int col) {
-		Person person = db.get(row);
+		Orders order = db.get(row);
+		
 		
 		switch(col){
 		case 0:
-			return person.getId();
+			return order.getC_name();
 		case 1:
-			return person.getName();
-		case 2 :
-			return person.getOccupation();
-		case 3:
-			return person.getAgeCategory();
+			return order.getC_surname();
+		case 2:
+			return order.getAddress();
+		case 3 :
+			return order.getProduct();
 		case 4:
-			return person.getEmpCat();
-		case 5:
-			return person.isUsCitizen();
+			return order.getPrice();
 		case 6:
-			return person.getTaxId();
+			return order.getAmount();
+		case 5:
+			return order.getQuantity();
+		case 7:
+			return order.getDeadline();
+		
 		}
+		
 		
 		return null;
 	}
+
 
 }
