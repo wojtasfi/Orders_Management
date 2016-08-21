@@ -17,7 +17,7 @@ public class Controller {
 	Database db = new Database();
 
 	public List<Orders> getPeople() {
-		return db.getPeople();
+		return db.getOrders();
 	}
 
 	public void addPerson(FormEvent ev) {
@@ -32,12 +32,12 @@ public class Controller {
 		db.addOrder(order);
 	}
 
-	public void removePerson(int index) {
+	public void removeOrder(int index) {
 		db.removeOrder(index);
 	}
 
-	public void save() throws SQLException, ParseException {
-		db.save();
+	public void saveOrder() throws SQLException, ParseException {
+		db.saveOrder();
 	}
 
 	public void disconnect() {
@@ -48,7 +48,7 @@ public class Controller {
 		db.connect();
 	}
 
-	public void load() throws Exception {
-		db.load();
+	public void loadOrders() throws Exception {
+		db.loadOrders();
 	}
 }

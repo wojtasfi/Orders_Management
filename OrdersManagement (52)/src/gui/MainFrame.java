@@ -41,6 +41,7 @@ public class MainFrame extends JFrame {
 	private JSplitPane splitPane;
 	private JTabbedPane tabbedPane;
 	private MessagePanel messagePanel;
+	private ClientPanel clientPanel;
 
 	public MainFrame() {
 		super("Hello World");
@@ -58,6 +59,8 @@ public class MainFrame extends JFrame {
 		prefDialog = new PrefDialog(this);
 		tabbedPane = new JTabbedPane();
 		messagePanel = new MessagePanel();
+		clientPanel = new ClientPanel();
+		clientPanel.setVisible(false);
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, formPanel, tabbedPane);
 
 		tabbedPane.addTab("Person database", tablePanel);
@@ -76,7 +79,7 @@ public class MainFrame extends JFrame {
 
 		tablePanel.setPersonTableListener(new OrderTableListener() {
 			public void rowDeleted(int row) {
-				controller.removePerson(row);
+				controller.removeOrder(row);
 			}
 
 		});
@@ -112,7 +115,7 @@ public class MainFrame extends JFrame {
 				try {
 					
 					//dodajemy order
-					controller.save();
+					controller.saveOrder();
 				} catch (SQLException | ParseException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -121,7 +124,7 @@ public class MainFrame extends JFrame {
 				try {
 					
 					//ale ładujemy już sql
-					controller.load();
+					controller.loadOrders();
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -129,10 +132,37 @@ public class MainFrame extends JFrame {
 				tablePanel.refresh();
 			}
 		});
+		
+		
+		
+
+		
+		
+		
+		toolbar.setToolbarListener(new ToolbarListener(){
+
+			@Override
+			public void orders() {
+				formPanel.setVisible(false);
+				
+			}
+
+			@Override
+			public void clients() {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void products() {
+				// TODO Auto-generated method stub
+			}
+			
+		});
+		
 		setLayout(new BorderLayout());
-
 		add(splitPane, BorderLayout.CENTER);
-
+		add(clientPanel, BorderLayout.WEST);
+		add(toolbar, BorderLayout.NORTH);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setSize(600, 500);
 		setMinimumSize(new Dimension(500, 400));
@@ -201,6 +231,8 @@ public class MainFrame extends JFrame {
 
 			}
 		});
+		
+		
 
 		menuBar.add(fileMenu);
 		menuBar.add(windowMenu);
@@ -245,7 +277,7 @@ public class MainFrame extends JFrame {
 		});
 		
 		try {
-			controller.load();
+			controller.loadOrders();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

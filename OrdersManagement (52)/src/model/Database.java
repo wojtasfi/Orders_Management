@@ -28,7 +28,7 @@ public class Database {
 	
 	
 	//Ładuje sql który łączy to wszystko, ale zapisuje tylko do tabeli 'orders'
-	public void load() throws SQLException {
+	public void loadOrders() throws SQLException {
 		 ArrayList columnNames = new ArrayList();
 
 		orders.clear();
@@ -91,7 +91,7 @@ public class Database {
 		}
 	}
 
-	public void save() throws SQLException, ParseException  {
+	public void saveOrder() throws SQLException, ParseException  {
 
 		// First we check if exists, if true then UPDATE, else INSERT
 		// Do not use real values, use ? instead
@@ -139,7 +139,7 @@ public class Database {
 		
 	}
 
-	public List<Orders> getPeople() {
+	public List<Orders> getOrders() {
 		return Collections.unmodifiableList(orders);
 	}
 

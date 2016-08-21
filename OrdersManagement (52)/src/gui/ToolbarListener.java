@@ -2,6 +2,7 @@ package gui;
 
 public interface ToolbarListener {
 
-	public void saveEventOccured();
-	public void refreshEventOccured();
+	public void orders();
+	public void clients();
+	public void products();
 }
