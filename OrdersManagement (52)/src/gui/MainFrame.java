@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,12 +9,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.prefs.Preferences;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -42,11 +41,13 @@ public class MainFrame extends JFrame {
 	private JTabbedPane tabbedPane;
 	private MessagePanel messagePanel;
 	private ClientPanel clientPanel;
+	private JSplitPane splitPaneClient;
+	private ClientTablePanel clientTablePanel;
+
 
 	public MainFrame() {
 		super("Hello World");
-		
-		
+
 		Dimension dim = getPreferredSize();
 		dim.width = 1000;
 		setPreferredSize(dim);
@@ -60,8 +61,10 @@ public class MainFrame extends JFrame {
 		tabbedPane = new JTabbedPane();
 		messagePanel = new MessagePanel();
 		clientPanel = new ClientPanel();
-		clientPanel.setVisible(false);
+		clientTablePanel = new ClientTablePanel();
+
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, formPanel, tabbedPane);
+		splitPaneClient = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, clientPanel, clientTablePanel);
 
 		tabbedPane.addTab("Person database", tablePanel);
 		tabbedPane.addTab("Messages", messagePanel);
@@ -71,7 +74,7 @@ public class MainFrame extends JFrame {
 		controller = new Controller();
 
 		tablePanel.setData(controller.getPeople());
-
+		clientTablePanel.setDataClient(controller.getClients());
 		connect();
 
 		// This is important
@@ -106,24 +109,22 @@ public class MainFrame extends JFrame {
 
 		setJMenuBar(createMenuBar());
 
-		
-
 		formPanel.setFormListener(new FormListener() {
 
 			public void formEventOccured(FormEvent e) {
 				controller.addPerson(e);
 				try {
-					
-					//dodajemy order
+
+					// dodajemy order
 					controller.saveOrder();
 				} catch (SQLException | ParseException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				
+
 				try {
-					
-					//ale ładujemy już sql
+
+					// ale ładujemy już sql
 					controller.loadOrders();
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
@@ -132,36 +133,60 @@ public class MainFrame extends JFrame {
 				tablePanel.refresh();
 			}
 		});
-		
-		
-		
 
-		
-		
-		
-		toolbar.setToolbarListener(new ToolbarListener(){
+		clientPanel.setListener(new ClientListener() {
+
+			@Override
+			public void clientAdded(ClientEvent e) {
+				try {
+					controller.saveClient(e);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				try {
+					controller.loadClients();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				clientTablePanel.refresh();
+			}
+
+		});
+		toolbar.setToolbarListener(new ToolbarListener() {
 
 			@Override
 			public void orders() {
-				formPanel.setVisible(false);
-				
+
+				getContentPane().remove(splitPaneClient);
+
+				add(splitPane, BorderLayout.CENTER);
+				validate();
+				repaint();
 			}
 
 			@Override
 			public void clients() {
-				// TODO Auto-generated method stub
+
+				getContentPane().remove(splitPane);
+
+				add(splitPaneClient, BorderLayout.CENTER);
+				validate();
+				repaint();
 			}
 
 			@Override
 			public void products() {
 				// TODO Auto-generated method stub
 			}
-			
+
 		});
-		
+
 		setLayout(new BorderLayout());
+
 		add(splitPane, BorderLayout.CENTER);
-		add(clientPanel, BorderLayout.WEST);
+
 		add(toolbar, BorderLayout.NORTH);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setSize(600, 500);
@@ -231,8 +256,6 @@ public class MainFrame extends JFrame {
 
 			}
 		});
-		
-		
 
 		menuBar.add(fileMenu);
 		menuBar.add(windowMenu);
@@ -245,8 +268,6 @@ public class MainFrame extends JFrame {
 		prefItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.CTRL_MASK));
 
 		importDataItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
-
-		
 
 		exitItem.addActionListener(new ActionListener() {
 
@@ -275,9 +296,10 @@ public class MainFrame extends JFrame {
 			}
 
 		});
-		
+
 		try {
 			controller.loadOrders();
+			controller.loadClients();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

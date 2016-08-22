@@ -4,11 +4,17 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
+
+import controller.Controller;
 
 public class ClientPanel extends JPanel {
 
@@ -26,6 +32,10 @@ public class ClientPanel extends JPanel {
 	private JLabel numberLabel;
 	private JLabel zipLabel;
 	private JLabel cityLabel;
+	
+	private Controller controller;
+
+	private ClientListener clientListener;
 
 	public ClientPanel() {
 		Dimension dim = getPreferredSize();
@@ -40,17 +50,49 @@ public class ClientPanel extends JPanel {
 		zip = new JTextField(10);
 		city = new JTextField(10);
 
-		JLabel nameLabel = new JLabel("Name");
-		JLabel surnameLabel = new JLabel("Surname");
-		JLabel streetLabel = new JLabel("Street");
-		JLabel numberLabel = new JLabel("Number");
-		JLabel zipLabel = new JLabel("Zip");
-		JLabel cityLabel = new JLabel("City");
+		nameLabel = new JLabel("Name");
+		surnameLabel = new JLabel("Surname");
+		streetLabel = new JLabel("Street");
+		numberLabel = new JLabel("Number");
+		zipLabel = new JLabel("Zip");
+		cityLabel = new JLabel("City");
+		
+		controller = new Controller();
 
 		add = new JButton("Add Client");
+		
+		add.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				 String nameC = name.getText();
+				 String surnameC= surname.getText();
+				 String streetC =street.getText();
+				 int numberC = Integer.parseInt(number.getText());
+				 String zipC = zip.getText();
+				 String cityC = city.getText();
+				 
+				 ClientEvent ev = new ClientEvent(this, nameC, surnameC, streetC,
+						 numberC, zipC, cityC);
+				 
+				clientListener.clientAdded(ev);
+				
+			}
+			
+		});
+		
+		Border innerBorder = BorderFactory.createTitledBorder("Add Client");
+
+		Border outerBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
+		
+		setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
 
 		layoutComponents();
 		setVisible(true);
+	}
+
+	public void setListener(ClientListener listener) {
+		this.clientListener = listener;
 	}
 
 	public void layoutComponents() {
@@ -80,5 +122,100 @@ public class ClientPanel extends JPanel {
 		add(name, gc);
 
 		///////////////////// Next row///////////////////
+
+		gc.gridy++;
+		gc.gridx = 0;
+		gc.weightx = 1;
+		gc.weighty = 0.1;
+		gc.fill = GridBagConstraints.NONE;
+		gc.anchor = GridBagConstraints.LINE_END;
+		gc.insets = new Insets(0, 0, 0, 5);
+		add(surnameLabel, gc);
+
+		// cell to the left
+		gc.gridx = 1;
+		gc.anchor = GridBagConstraints.LINE_START;
+		gc.insets = new Insets(0, 0, 0, 0);
+		add(surname, gc);
+
+		///////////////////// Next row///////////////////
+
+		gc.gridy++;
+		gc.gridx = 0;
+		gc.weightx = 1;
+		gc.weighty = 0.1;
+		gc.fill = GridBagConstraints.NONE;
+		gc.anchor = GridBagConstraints.LINE_END;
+		gc.insets = new Insets(0, 0, 0, 5);
+		add(streetLabel, gc);
+
+		// cell to the left
+		gc.gridx = 1;
+		gc.anchor = GridBagConstraints.LINE_START;
+		gc.insets = new Insets(0, 0, 0, 0);
+		add(street, gc);
+
+		///////////////////// Next row///////////////////
+
+		gc.gridy++;
+		gc.gridx = 0;
+		gc.weightx = 1;
+		gc.weighty = 0.1;
+		gc.fill = GridBagConstraints.NONE;
+		gc.anchor = GridBagConstraints.LINE_END;
+		gc.insets = new Insets(0, 0, 0, 5);
+		add(numberLabel, gc);
+
+		// cell to the left
+		gc.gridx = 1;
+		gc.anchor = GridBagConstraints.LINE_START;
+		gc.insets = new Insets(0, 0, 0, 0);
+		add(number, gc);
+
+		///////////////////// Next row///////////////////
+
+		gc.gridy++;
+		gc.gridx = 0;
+		gc.weightx = 1;
+		gc.weighty = 0.1;
+		gc.fill = GridBagConstraints.NONE;
+		gc.anchor = GridBagConstraints.LINE_END;
+		gc.insets = new Insets(0, 0, 0, 5);
+		add(zipLabel, gc);
+
+		// cell to the left
+		gc.gridx = 1;
+		gc.anchor = GridBagConstraints.LINE_START;
+		gc.insets = new Insets(0, 0, 0, 0);
+		add(zip, gc);
+
+		///////////////////// Next row///////////////////
+
+		gc.gridy++;
+		gc.gridx = 0;
+		gc.weightx = 1;
+		gc.weighty = 0.1;
+		gc.fill = GridBagConstraints.NONE;
+		gc.anchor = GridBagConstraints.LINE_END;
+		gc.insets = new Insets(0, 0, 0, 5);
+		add(cityLabel, gc);
+
+		// cell to the left
+		gc.gridx = 1;
+		gc.anchor = GridBagConstraints.LINE_START;
+		gc.insets = new Insets(0, 0, 0, 0);
+		add(city, gc);
+
+		///////////////////// Next row///////////////////
+
+		gc.gridy++;
+		gc.gridx = 1;
+		gc.weightx = 1;
+		gc.weighty = 2;
+		gc.fill = GridBagConstraints.NONE;
+		gc.anchor = GridBagConstraints.LINE_START;
+		gc.insets = new Insets(0, 0, 0, 0);
+		add(add, gc);
+
 	}
 }

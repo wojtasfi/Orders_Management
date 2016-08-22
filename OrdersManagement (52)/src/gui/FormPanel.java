@@ -248,7 +248,7 @@ public class FormPanel extends JPanel {
 
 		});
 
-		Border innerBorder = BorderFactory.createTitledBorder("Add Person");
+		Border innerBorder = BorderFactory.createTitledBorder("Add Order");
 
 		Border outerBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
 

@@ -7,7 +7,9 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
+import gui.ClientEvent;
 import gui.FormEvent;
+import model.Client;
 import model.Database;
 import model.Order;
 import model.Orders;
@@ -51,4 +53,31 @@ public class Controller {
 	public void loadOrders() throws Exception {
 		db.loadOrders();
 	}
+	
+	
+	public void saveClient(ClientEvent e) throws SQLException {
+		String name = e.getName();
+		String surname = e.getSurname();
+		String street = e.getStreet();
+		int number = e.getNumber();
+		String zip = e.getZip();
+		String city = e.getCity();
+		
+		Client client = new Client(name, surname, street, number, zip, city);
+		
+		db.saveClient(client);
+		
+	}
+
+	public void loadClients() throws SQLException {
+		db.loadClients();
+		
+	}
+
+	public List<Client> getClients() {
+		// TODO Auto-generated method stub
+		return db.getClients();
+	}
+
+	
 }
