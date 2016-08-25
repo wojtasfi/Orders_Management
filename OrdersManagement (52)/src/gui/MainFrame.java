@@ -1,7 +1,6 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,6 +22,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import controller.Controller;
 
@@ -43,10 +44,22 @@ public class MainFrame extends JFrame {
 	private ClientPanel clientPanel;
 	private JSplitPane splitPaneClient;
 	private ClientTablePanel clientTablePanel;
-
+	private ProductPanel productPanel;
+	private JSplitPane splitPaneProduct;
+	private ProductTablePanel productTablePanel;
 
 	public MainFrame() {
-		super("Hello World");
+		super("Orders Management");
+		
+		 try {
+	            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+		
+		
+		
+		
 
 		Dimension dim = getPreferredSize();
 		dim.width = 1000;
@@ -63,8 +76,12 @@ public class MainFrame extends JFrame {
 		clientPanel = new ClientPanel();
 		clientTablePanel = new ClientTablePanel();
 
+		productPanel = new ProductPanel();
+		productTablePanel = new ProductTablePanel();
+
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, formPanel, tabbedPane);
 		splitPaneClient = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, clientPanel, clientTablePanel);
+		splitPaneProduct = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, productPanel, productTablePanel);
 
 		tabbedPane.addTab("Person database", tablePanel);
 		tabbedPane.addTab("Messages", messagePanel);
@@ -75,6 +92,7 @@ public class MainFrame extends JFrame {
 
 		tablePanel.setData(controller.getPeople());
 		clientTablePanel.setDataClient(controller.getClients());
+		productTablePanel.setDataProduct(controller.getProduct());
 		connect();
 
 		// This is important
@@ -133,6 +151,23 @@ public class MainFrame extends JFrame {
 				tablePanel.refresh();
 			}
 		});
+		
+		productPanel.setListener(new ProductListener(){
+			
+			@Override
+			public void productAdded(ProductEvent e) {
+			
+				try {
+					controller.saveProduct(e);
+					controller.loadProducts();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				productTablePanel.refresh();
+			}
+			
+		});
 
 		clientPanel.setListener(new ClientListener() {
 
@@ -159,8 +194,13 @@ public class MainFrame extends JFrame {
 			@Override
 			public void orders() {
 
+				if (splitPaneClient!= null) {
 				getContentPane().remove(splitPaneClient);
-
+				}
+				if (splitPaneProduct != null) {
+				getContentPane().remove(splitPaneProduct);
+				}
+				
 				add(splitPane, BorderLayout.CENTER);
 				validate();
 				repaint();
@@ -169,7 +209,12 @@ public class MainFrame extends JFrame {
 			@Override
 			public void clients() {
 
-				getContentPane().remove(splitPane);
+				if (splitPane != null) {
+					getContentPane().remove(splitPane);
+				}
+				if (splitPaneProduct != null) {
+					getContentPane().remove(splitPaneProduct);
+				}
 
 				add(splitPaneClient, BorderLayout.CENTER);
 				validate();
@@ -178,7 +223,16 @@ public class MainFrame extends JFrame {
 
 			@Override
 			public void products() {
-				// TODO Auto-generated method stub
+				if (splitPane != null) {
+				getContentPane().remove(splitPane);
+				}
+				
+				if (splitPaneClient != null) {
+				getContentPane().remove(splitPaneClient);
+				}
+				add(splitPaneProduct, BorderLayout.CENTER);
+				validate();
+				repaint();
 			}
 
 		});
@@ -300,6 +354,7 @@ public class MainFrame extends JFrame {
 		try {
 			controller.loadOrders();
 			controller.loadClients();
+			controller.loadProducts();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -1,7 +1,5 @@
 package controller;
 
-import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Date;
@@ -9,10 +7,12 @@ import java.util.List;
 
 import gui.ClientEvent;
 import gui.FormEvent;
+import gui.ProductEvent;
 import model.Client;
 import model.Database;
 import model.Order;
 import model.Orders;
+import model.Product;
 
 public class Controller {
 
@@ -53,8 +53,7 @@ public class Controller {
 	public void loadOrders() throws Exception {
 		db.loadOrders();
 	}
-	
-	
+
 	public void saveClient(ClientEvent e) throws SQLException {
 		String name = e.getName();
 		String surname = e.getSurname();
@@ -62,16 +61,16 @@ public class Controller {
 		int number = e.getNumber();
 		String zip = e.getZip();
 		String city = e.getCity();
-		
+
 		Client client = new Client(name, surname, street, number, zip, city);
-		
+
 		db.saveClient(client);
-		
+
 	}
 
 	public void loadClients() throws SQLException {
 		db.loadClients();
-		
+
 	}
 
 	public List<Client> getClients() {
@@ -79,5 +78,23 @@ public class Controller {
 		return db.getClients();
 	}
 
-	
+	public List<Product> getProduct() {
+		// TODO Auto-generated method stub
+		return db.getProducts();
+	}
+
+	public void saveProduct(ProductEvent ev) throws SQLException {
+		String name = ev.getName();
+		float price = ev.getPrice();
+		int storage = ev.getStorage();
+
+		Product product = new Product(name, storage, price);
+		db.saveProduct(product);
+
+	}
+
+	public void loadProducts() throws SQLException {
+		db.loadProducts();
+	}
+
 }

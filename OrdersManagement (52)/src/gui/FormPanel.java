@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -12,6 +13,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
@@ -26,6 +28,8 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -38,7 +42,8 @@ public class FormPanel extends JPanel {
 	private JLabel productLabel;
 	private JLabel deadlineLabel;
 	private JLabel amountLabel;
-	private JLabel orderLabel;
+	private JLabel amountSumLabel;
+	private JLabel priceSumLabel;
 
 	private JComboBox<String> clientCombo;
 	private JComboBox<String> productCombo;
@@ -65,7 +70,8 @@ public class FormPanel extends JPanel {
 		productLabel = new JLabel("Product");
 		deadlineLabel = new JLabel("Deadline: ");
 		amountLabel = new JLabel("Amount: ");
-		orderLabel = new JLabel();
+		amountSumLabel = new JLabel();
+		priceSumLabel= new JLabel();
 
 		clientCombo = new JComboBox<String>();
 		spinnerModel = new SpinnerNumberModel(0, 0, 9999, 1);
@@ -90,6 +96,7 @@ public class FormPanel extends JPanel {
 		p.put("text.year", "Year");
 		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
 		datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+		//datePicker.setFont(new Font("Arial", Font.BOLD, 12));
 
 		okBtn = new JButton("OK");
 
@@ -172,50 +179,22 @@ public class FormPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				refreshOrderLabeles();
+				
 
-				try {
-					Class.forName("com.mysql.jdbc.Driver");
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				try {
-					String Url = "jdbc:mysql://localhost:3306/OrdersManagement";
-					con = DriverManager.getConnection(Url, "root", "pollop123");
-					st = con.createStatement();
+		}});
+		
+		amountSpinner.addChangeListener(new ChangeListener(){
 
-					String product = (String) productCombo.getSelectedItem();
-					String s = "select * from Products where name = ?";
-					PreparedStatement stmt = con.prepareStatement(s);
 
-					stmt.setString(1, product);
-
-					ResultSet set = stmt.executeQuery();
-					
-					int amount = (int) amountSpinner.getValue();
-					if (amount != 0) {
-						while (set.next()) {
-							float price = set.getFloat(3);
-							float value = price * amount;
-
-							orderLabel.setText("Price: " +  Integer.toString(set.getInt("Price")) + " \n" +
-							"Amount: " + Float.toString(value));
-						}
-					}
-
-				} catch (Exception e1) {
-					
-				} finally {
-					try {
-						con.close();
-					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(null, "ERROR CLOSE");
-					}
-				}
-
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				refreshOrderLabeles();
 			}
-
+			
 		});
+		
+		
 
 		okBtn.addActionListener(new ActionListener() {
 
@@ -261,6 +240,55 @@ public class FormPanel extends JPanel {
 	public void setFormListener(FormListener listener) {
 		this.formListener = listener;
 	}
+	
+	public void refreshOrderLabeles(){
+		
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			String Url = "jdbc:mysql://localhost:3306/OrdersManagement";
+			con = DriverManager.getConnection(Url, "root", "pollop123");
+			st = con.createStatement();
+
+			String product = (String) productCombo.getSelectedItem();
+			String s = "select price from Products where name = ?";
+			PreparedStatement stmt = con.prepareStatement(s);
+
+			stmt.setString(1, product);
+
+			ResultSet set = stmt.executeQuery();
+			
+			int amount = (int) amountSpinner.getValue();
+			if (amount != 0) {
+				while (set.next()) {
+					float price = set.getFloat(1);
+					
+					
+					DecimalFormat f = new DecimalFormat("##.00");
+					String value = f.format(price * amount);
+					
+					amountSumLabel.setText("Amount: " + value);
+					priceSumLabel.setText("Price: " +  Integer.toString(set.getInt("Price")));
+				}
+			}
+
+		} catch (Exception e1) {
+			
+		} finally {
+			try {
+				con.close();
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(null, "ERROR CLOSE");
+			}
+		}
+
+	}
+		
+	
 
 	public void layoutComponents() {
 		setLayout(new GridBagLayout());
@@ -305,11 +333,12 @@ public class FormPanel extends JPanel {
 		gc.insets = new Insets(0, 0, 0, 0);
 		add(productCombo, gc);
 
+		
+		
 		gc.gridx = 2;
-		gc.gridy = 1;
-		gc.anchor = GridBagConstraints.LINE_START;
-		gc.insets = new Insets(0, 0, 0, 0);
-		add(orderLabel, gc);
+		gc.weightx = 10;
+		gc.anchor = GridBagConstraints.LAST_LINE_START;
+		add(priceSumLabel, gc);
 
 		///////////////////// Next row///////////////////
 		gc.gridy++;
@@ -326,6 +355,11 @@ public class FormPanel extends JPanel {
 		gc.insets = new Insets(0, 0, 0, 0);
 		gc.anchor = GridBagConstraints.FIRST_LINE_START;
 		add(amountSpinner, gc);
+		
+		gc.gridx = 2;
+		gc.weightx = 10;
+		gc.anchor = GridBagConstraints.FIRST_LINE_START;
+		add(amountSumLabel, gc);
 
 		///////////////////// Next row///////////////////
 		gc.gridy++;

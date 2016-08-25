@@ -161,6 +161,7 @@ public class Database {
 	public List<Orders> getOrders() {
 		return Collections.unmodifiableList(orders);
 	}
+
 	public List<Client> getClients() {
 		return clients;
 
@@ -171,7 +172,7 @@ public class Database {
 	}
 
 	public void loadClients() throws SQLException {
-		
+
 		clients.clear();
 		String sql = "select name, surname, street, houseNumber, zip, city from clients";
 
@@ -180,29 +181,24 @@ public class Database {
 
 		while (results.next()) {
 
-			
 			String name = results.getString("name");
 			String surname = results.getString("surname");
 			String street = results.getString("street");
 			int number = results.getInt("houseNumber");
 			String zip = results.getString("zip");
 			String city = results.getString("city");
-			
 
-			Client client = new Client(name, surname, street, number, zip,city);
+			Client client = new Client(name, surname, street, number, zip, city);
 			clients.add(client);
 
 		}
 
-		
 		results.close();
 		selectStatement.close();
 	}
 
-	
-public void loadProducts() throws SQLException {
-		
-		clients.clear();
+	public void loadProducts() throws SQLException {
+
 		String sql = "select name, price, storage from products";
 
 		Statement selectStatement = con.createStatement();
@@ -210,21 +206,44 @@ public void loadProducts() throws SQLException {
 
 		while (results.next()) {
 
-			
 			String name = results.getString("name");
 			int price = results.getInt("storage");
 			float storage = results.getFloat("price");
-			
-			
 
 			Product product = new Product(name, price, storage);
 			products.add(product);
 
 		}
 
-		
 		results.close();
 		selectStatement.close();
+	}
+
+	public List<Product> getProducts() {
+		// TODO Auto-generated method stub
+		return products;
+	}
+
+	public void saveProduct(Product product) throws SQLException {
+		products.clear();
+		
+		String insertSql = "insert into products (name, price, storage) "
+				+ "values (?,?,?)";
+		PreparedStatement insertStmt = con.prepareStatement(insertSql);
+
+		String name = product.getName();
+		float price = product.getPrice();
+		int storage = product.getStorage();
+		
+
+		int col = 1;
+
+		insertStmt.setString(col++, name);
+		insertStmt.setFloat(col++, price);
+		insertStmt.setInt(col++, storage);
+		
+
+		insertStmt.executeUpdate();
 	}
 
 }

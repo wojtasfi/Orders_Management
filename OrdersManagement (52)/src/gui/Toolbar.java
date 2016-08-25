@@ -69,7 +69,7 @@ public class Toolbar extends JToolBar implements ActionListener {
 			if (toolbarListener != null) {
 				toolbarListener.products();
 			}
-		} else {
+		} else if (clicked == clientsButton){
 			if (toolbarListener != null) {
 				toolbarListener.clients();
 			}
