@@ -3,6 +3,14 @@ package model;
 import java.util.Date;
 
 public class Orders {
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	private int id;
 	private String c_name;
 	private String c_surname;
 	private String address;
@@ -19,8 +27,19 @@ public class Orders {
 	public void setDeadline(Date deadline) {
 		this.deadline = deadline;
 	}
-	
-	
+	public Orders(int id, String c_name, String c_surname, String address, String product, float price, int quantity,
+			float amount, Date deadline) {
+		super();
+		this.id = id;
+		this.c_name = c_name;
+		this.c_surname = c_surname;
+		this.address = address;
+		this.product = product;
+		this.price = price;
+		this.quantity = quantity;
+		this.amount = amount;
+		this.deadline = deadline;
+	}
 	public Orders(String c_name, String c_surname, String address, String product, float price, int quantity,
 			float amount, Date deadline) {
 		super();

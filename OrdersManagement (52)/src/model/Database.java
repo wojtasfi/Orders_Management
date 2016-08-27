@@ -31,7 +31,7 @@ public class Database {
 
 		// To tu muszę zrobić selecta z joinem żeby mi ładnie wyświetlało i po
 		// kązdym dodaniu musi zrobic save load i refresh
-		String sql = "select o.c_name, o.c_surname, concat(c.street, ' ',c.houseNumber,' ', c.zip, ' ', c.city) as Address, o.product, "
+		String sql = "select o.id, o.c_name, o.c_surname, concat(c.street, ' ',c.houseNumber,' ', c.zip, ' ', c.city) as Address, o.product, "
 				+ "p.price, o.amount, round(p.price*o.amount,2), o.deadline from orders o "
 				+ "join clients c on concat(c.name,c.surname) = concat(o.c_name, o.c_surname) join products p on p.name= o.product";
 		Statement selectStatement = con.createStatement();
@@ -41,16 +41,17 @@ public class Database {
 
 			// muszę stworzyć nową klasę orders i dać jej konstruktor ze
 			// wszytkimi polami co chce wyświetlić
-			String c_name = rs.getString(1);
-			String c_surname = rs.getString(2);
-			String address = rs.getString(3);
-			String product = rs.getString(4);
-			float price = rs.getFloat(5);
-			int quantity = rs.getInt(6);
-			float amount = rs.getFloat(7);
-			Date deadline = rs.getDate(8);
+			int id = rs.getInt(1);
+			String c_name = rs.getString(2);
+			String c_surname = rs.getString(3);
+			String address = rs.getString(4);
+			String product = rs.getString(5);
+			float price = rs.getFloat(6);
+			int quantity = rs.getInt(7);
+			float amount = rs.getFloat(8);
+			Date deadline = rs.getDate(9);
 
-			Orders newOrder = new Orders(c_name, c_surname, address, product, price, quantity, amount, deadline);
+			Orders newOrder = new Orders(id, c_name, c_surname, address, product, price, quantity, amount, deadline);
 			orders.add(newOrder);
 
 		}

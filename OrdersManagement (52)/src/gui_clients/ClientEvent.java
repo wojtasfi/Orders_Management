@@ -1,4 +1,4 @@
-package gui;
+package gui_clients;
 
 import java.util.EventObject;
 

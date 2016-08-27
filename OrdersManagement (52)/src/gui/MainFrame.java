@@ -26,6 +26,19 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import controller.Controller;
+import gui_clients.ClientEvent;
+import gui_clients.ClientListener;
+import gui_clients.ClientPanel;
+import gui_clients.ClientTablePanel;
+import gui_orders.FormEvent;
+import gui_orders.FormListener;
+import gui_orders.FormPanel;
+import gui_orders.OrderTableListener;
+import gui_orders.TablePanel;
+import gui_products.ProductEvent;
+import gui_products.ProductListener;
+import gui_products.ProductPanel;
+import gui_products.ProductTablePanel;
 
 public class MainFrame extends JFrame {
 

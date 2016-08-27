@@ -1,4 +1,4 @@
-package gui;
+package gui_orders;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -44,6 +44,8 @@ public class TablePanel extends JPanel {
 			public void mousePressed(MouseEvent e) {
 
 				int row = table.rowAtPoint(e.getPoint());
+				
+				
 
 				table.getSelectionModel().setSelectionInterval(row, row);
 

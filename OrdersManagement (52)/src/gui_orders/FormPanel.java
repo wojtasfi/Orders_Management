@@ -1,4 +1,4 @@
-package gui;
+package gui_orders;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -34,6 +34,8 @@ import javax.swing.event.ChangeListener;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+
+import gui.DateLabelFormatter;
 
 public class FormPanel extends JPanel {
 

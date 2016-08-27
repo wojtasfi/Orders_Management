@@ -1,4 +1,4 @@
-package gui;
+package gui_orders;
 
 import java.util.List;
 
@@ -6,18 +6,17 @@ import javax.swing.table.AbstractTableModel;
 
 import model.Orders;
 
-
 //A way to represent data in table
 public class OrderTableModel extends AbstractTableModel {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	private List<Orders> db;
-	
-	private String[] colNames = {"Client name", "Client surname","Address", "Product","Price", "Quantity","Amount","Deadline" };
-	
-	
-	public void setData(List<Orders> list){
+
+	private String[] colNames = { "ID", "Client name", "Client surname", "Address", "Product", "Price", "Quantity",
+			"Amount", "Deadline" };
+
+	public void setData(List<Orders> list) {
 		this.db = list;
 	}
 
@@ -30,7 +29,7 @@ public class OrderTableModel extends AbstractTableModel {
 	@Override
 	public int getColumnCount() {
 		// TODO Auto-generated method stub
-		return 8;
+		return 9;
 	}
 
 	@Override
@@ -42,31 +41,31 @@ public class OrderTableModel extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int row, int col) {
 		Orders order = db.get(row);
-		
-		
-		switch(col){
+
+		switch (col) {
 		case 0:
-			return order.getC_name();
+			return order.getId();
+
 		case 1:
-			return order.getC_surname();
+			return order.getC_name();
 		case 2:
+			return order.getC_surname();
+		case 3:
 			return order.getAddress();
-		case 3 :
-			return order.getProduct();
 		case 4:
+			return order.getProduct();
+		case 5:
 			return order.getPrice();
 		case 6:
 			return order.getAmount();
-		case 5:
-			return order.getQuantity();
 		case 7:
+			return order.getQuantity();
+		case 8:
 			return order.getDeadline();
-		
+
 		}
-		
-		
+
 		return null;
 	}
-
 
 }

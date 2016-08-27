@@ -1,4 +1,4 @@
-package gui;
+package gui_orders;
 
 import java.awt.event.ActionListener;
 import java.util.Date;

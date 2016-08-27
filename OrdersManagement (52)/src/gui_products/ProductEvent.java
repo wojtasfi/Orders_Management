@@ -1,4 +1,4 @@
-package gui;
+package gui_products;
 
 import java.util.EventObject;
 

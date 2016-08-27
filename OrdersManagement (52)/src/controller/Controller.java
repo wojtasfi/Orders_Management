@@ -5,9 +5,9 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
-import gui.ClientEvent;
-import gui.FormEvent;
-import gui.ProductEvent;
+import gui_clients.ClientEvent;
+import gui_orders.FormEvent;
+import gui_products.ProductEvent;
 import model.Client;
 import model.Database;
 import model.Order;
