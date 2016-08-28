@@ -23,13 +23,13 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import controller.Controller;
 import gui_clients.ClientEvent;
 import gui_clients.ClientListener;
 import gui_clients.ClientPanel;
 import gui_clients.ClientTablePanel;
+import gui_clients.MostProfitTable;
 import gui_orders.FormEvent;
 import gui_orders.FormListener;
 import gui_orders.FormPanel;
@@ -60,6 +60,8 @@ public class MainFrame extends JFrame {
 	private ProductPanel productPanel;
 	private JSplitPane splitPaneProduct;
 	private ProductTablePanel productTablePanel;
+	private MostProfitTable mostProfitTable;
+	private JTabbedPane clientTabbedPane;
 
 	public MainFrame() {
 		super("Orders Management");
@@ -88,12 +90,17 @@ public class MainFrame extends JFrame {
 		messagePanel = new MessagePanel();
 		clientPanel = new ClientPanel();
 		clientTablePanel = new ClientTablePanel();
+		mostProfitTable = new MostProfitTable();
+		
+		clientTabbedPane = new JTabbedPane();
+		clientTabbedPane.addTab("Clients", clientTablePanel);
+		clientTabbedPane.addTab("Most profitable clients", mostProfitTable);
 
 		productPanel = new ProductPanel();
 		productTablePanel = new ProductTablePanel();
 
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, formPanel, tabbedPane);
-		splitPaneClient = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, clientPanel, clientTablePanel);
+		splitPaneClient = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, clientPanel, clientTabbedPane);
 		splitPaneProduct = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, productPanel, productTablePanel);
 
 		tabbedPane.addTab("Person database", tablePanel);
@@ -103,10 +110,13 @@ public class MainFrame extends JFrame {
 
 		controller = new Controller();
 
+		connect();
 		tablePanel.setData(controller.getPeople());
 		clientTablePanel.setDataClient(controller.getClients());
 		productTablePanel.setDataProduct(controller.getProduct());
-		connect();
+		mostProfitTable.setDataClient(controller.getMostProfitClients());
+		
+		
 
 		// This is important
 		pref = Preferences.userRoot().node("db");
@@ -368,6 +378,8 @@ public class MainFrame extends JFrame {
 			controller.loadOrders();
 			controller.loadClients();
 			controller.loadProducts();
+			controller.loadMostProfitClients();
+			//System.out.println(controller.getMostProfitClients());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

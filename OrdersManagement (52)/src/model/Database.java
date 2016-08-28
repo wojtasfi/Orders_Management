@@ -22,8 +22,37 @@ public class Database {
 	private List<Order> order;
 	private List<Client> clients;
 	private List<Product> products;
+	private List<MostProfitClients> mostProfitClients;
 
 	// Ładuje sql który łączy to wszystko, ale zapisuje tylko do tabeli 'orders'
+	
+	public  List<MostProfitClients> getMostProfitClients(){
+		return mostProfitClients;
+	}
+	
+	public void loadMostProfitClients() throws SQLException{
+		mostProfitClients.clear();
+		
+		String sql = "select concat(o.c_name, ' ', o.c_surname) as Client,  round(sum(p.price * o.quantity),2) as Amount "
+				+ "from orders o "
+				 +"join products p on p.name= o.product "
+				+ "group by concat(o.c_name, o.c_surname) "
+				 + "order by sum(p.price * o.quantity) desc";
+		Statement selectStatement = con.createStatement();
+		ResultSet rs = selectStatement.executeQuery(sql);
+
+		while (rs.next()) {
+			String client = rs.getString(1);
+			float amount = Math.round( rs.getFloat(2));
+			
+			MostProfitClients mp = new MostProfitClients(client,amount);
+			mostProfitClients.add(mp);
+			
+		}
+		
+	}
+	
+	
 	public void loadOrders() throws SQLException {
 		ArrayList columnNames = new ArrayList();
 
@@ -32,7 +61,7 @@ public class Database {
 		// To tu muszę zrobić selecta z joinem żeby mi ładnie wyświetlało i po
 		// kązdym dodaniu musi zrobic save load i refresh
 		String sql = "select o.id, o.c_name, o.c_surname, concat(c.street, ' ',c.houseNumber,' ', c.zip, ' ', c.city) as Address, o.product, "
-				+ "p.price, o.amount, round(p.price*o.amount,2), o.deadline from orders o "
+				+ "p.price, o.quantity, round(p.price*o.quantity,2), o.deadline from orders o "
 				+ "join clients c on concat(c.name,c.surname) = concat(o.c_name, o.c_surname) join products p on p.name= o.product";
 		Statement selectStatement = con.createStatement();
 		ResultSet rs = selectStatement.executeQuery(sql);
@@ -151,6 +180,7 @@ public class Database {
 		orders = new LinkedList<Orders>();
 		clients = new LinkedList<Client>();
 		products = new LinkedList<Product>();
+		mostProfitClients = new LinkedList<MostProfitClients>();
 
 	}
 

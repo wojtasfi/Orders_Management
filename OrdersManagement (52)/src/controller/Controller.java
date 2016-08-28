@@ -10,6 +10,7 @@ import gui_orders.FormEvent;
 import gui_products.ProductEvent;
 import model.Client;
 import model.Database;
+import model.MostProfitClients;
 import model.Order;
 import model.Orders;
 import model.Product;
@@ -82,6 +83,13 @@ public class Controller {
 		// TODO Auto-generated method stub
 		return db.getProducts();
 	}
+	
+	public List<MostProfitClients> getMostProfitClients(){
+		return db.getMostProfitClients();
+		
+		
+		
+	}
 
 	public void saveProduct(ProductEvent ev) throws SQLException {
 		String name = ev.getName();
@@ -96,5 +104,12 @@ public class Controller {
 	public void loadProducts() throws SQLException {
 		db.loadProducts();
 	}
+
+	public void loadMostProfitClients() throws SQLException {
+
+		db.loadMostProfitClients();
+	}
+	
+	
 
 }
