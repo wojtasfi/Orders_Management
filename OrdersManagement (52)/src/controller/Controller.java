@@ -109,6 +109,16 @@ public class Controller {
 
 		db.loadMostProfitClients();
 	}
+
+	public List<MostProfitClients> getAverageClients() {
+		// TODO Auto-generated method stub
+		return db.getAverageClients();
+	}
+
+	public void loadAverageClients() throws SQLException {
+		db.loadAverageClients();
+		
+	}
 	
 	
 

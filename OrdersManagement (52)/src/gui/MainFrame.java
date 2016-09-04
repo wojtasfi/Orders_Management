@@ -25,6 +25,7 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
 import controller.Controller;
+import gui_clients.AverageClientTable;
 import gui_clients.ClientEvent;
 import gui_clients.ClientListener;
 import gui_clients.ClientPanel;
@@ -62,6 +63,7 @@ public class MainFrame extends JFrame {
 	private ProductTablePanel productTablePanel;
 	private MostProfitTable mostProfitTable;
 	private JTabbedPane clientTabbedPane;
+	private AverageClientTable averageClientTable;
 
 	public MainFrame() {
 		super("Orders Management");
@@ -91,10 +93,12 @@ public class MainFrame extends JFrame {
 		clientPanel = new ClientPanel();
 		clientTablePanel = new ClientTablePanel();
 		mostProfitTable = new MostProfitTable();
+		averageClientTable = new AverageClientTable();
 		
 		clientTabbedPane = new JTabbedPane();
 		clientTabbedPane.addTab("Clients", clientTablePanel);
 		clientTabbedPane.addTab("Most profitable clients", mostProfitTable);
+		clientTabbedPane.addTab("Average amount per order", averageClientTable);
 
 		productPanel = new ProductPanel();
 		productTablePanel = new ProductTablePanel();
@@ -115,6 +119,7 @@ public class MainFrame extends JFrame {
 		clientTablePanel.setDataClient(controller.getClients());
 		productTablePanel.setDataProduct(controller.getProduct());
 		mostProfitTable.setDataClient(controller.getMostProfitClients());
+		averageClientTable.setDataClient(controller.getAverageClients());
 		
 		
 
@@ -379,6 +384,7 @@ public class MainFrame extends JFrame {
 			controller.loadClients();
 			controller.loadProducts();
 			controller.loadMostProfitClients();
+			controller.loadAverageClients();
 			//System.out.println(controller.getMostProfitClients());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

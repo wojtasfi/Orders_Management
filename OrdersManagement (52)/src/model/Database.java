@@ -23,36 +23,57 @@ public class Database {
 	private List<Client> clients;
 	private List<Product> products;
 	private List<MostProfitClients> mostProfitClients;
+	private List<MostProfitClients> averageClients;
 
 	// Ładuje sql który łączy to wszystko, ale zapisuje tylko do tabeli 'orders'
-	
-	public  List<MostProfitClients> getMostProfitClients(){
+
+	public List<MostProfitClients> getMostProfitClients() {
 		return mostProfitClients;
 	}
-	
-	public void loadMostProfitClients() throws SQLException{
-		mostProfitClients.clear();
-		
-		String sql = "select concat(o.c_name, ' ', o.c_surname) as Client,  round(sum(p.price * o.quantity),2) as Amount "
-				+ "from orders o "
-				 +"join products p on p.name= o.product "
-				+ "group by concat(o.c_name, o.c_surname) "
-				 + "order by sum(p.price * o.quantity) desc";
+
+	public List<MostProfitClients> getAverageClients() {
+		return averageClients;
+	}
+
+	public void loadAverageClients() throws SQLException {
+		averageClients.clear();
+
+		String sql = "select concat(o.c_name, ' ', o.c_surname) as Client,  round(sum(p.price * o.quantity)/count(o.LOAD_DTE),2) as Average "
+				+ "from orders o " + "join products p on p.name= o.product " + "group by concat(o.c_name, o.c_surname)";
 		Statement selectStatement = con.createStatement();
 		ResultSet rs = selectStatement.executeQuery(sql);
 
 		while (rs.next()) {
 			String client = rs.getString(1);
-			float amount = Math.round( rs.getFloat(2));
-			
-			MostProfitClients mp = new MostProfitClients(client,amount);
-			mostProfitClients.add(mp);
-			
+			double amount = Math.round(rs.getDouble(2));
+
+			MostProfitClients mp = new MostProfitClients(client, amount);
+			averageClients.add(mp);
+
 		}
-		
+
 	}
-	
-	
+
+	public void loadMostProfitClients() throws SQLException {
+		mostProfitClients.clear();
+
+		String sql = "select concat(o.c_name, ' ', o.c_surname) as Client,  round(sum(p.price * o.quantity),2) as Amount "
+				+ "from orders o " + "join products p on p.name= o.product " + "group by concat(o.c_name, o.c_surname) "
+				+ "order by sum(p.price * o.quantity) desc";
+		Statement selectStatement = con.createStatement();
+		ResultSet rs = selectStatement.executeQuery(sql);
+
+		while (rs.next()) {
+			String client = rs.getString(1);
+			float amount = Math.round(rs.getFloat(2));
+
+			MostProfitClients mp = new MostProfitClients(client, amount);
+			mostProfitClients.add(mp);
+
+		}
+
+	}
+
 	public void loadOrders() throws SQLException {
 		ArrayList columnNames = new ArrayList();
 
@@ -181,6 +202,7 @@ public class Database {
 		clients = new LinkedList<Client>();
 		products = new LinkedList<Product>();
 		mostProfitClients = new LinkedList<MostProfitClients>();
+		averageClients = new LinkedList<MostProfitClients>();
 
 	}
 
@@ -257,22 +279,19 @@ public class Database {
 
 	public void saveProduct(Product product) throws SQLException {
 		products.clear();
-		
-		String insertSql = "insert into products (name, price, storage) "
-				+ "values (?,?,?)";
+
+		String insertSql = "insert into products (name, price, storage) " + "values (?,?,?)";
 		PreparedStatement insertStmt = con.prepareStatement(insertSql);
 
 		String name = product.getName();
 		float price = product.getPrice();
 		int storage = product.getStorage();
-		
 
 		int col = 1;
 
 		insertStmt.setString(col++, name);
 		insertStmt.setFloat(col++, price);
 		insertStmt.setInt(col++, storage);
-		
 
 		insertStmt.executeUpdate();
 	}

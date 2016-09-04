@@ -1,6 +1,7 @@
-/gui/
-/controller/
-/model/
 /gui_clients/
-/gui_products/
 /gui_orders/
+/gui_products/
+/model/
+/controller/
+/gui/
+/images/
