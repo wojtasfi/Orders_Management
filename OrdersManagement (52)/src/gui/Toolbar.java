@@ -16,6 +16,7 @@ public class Toolbar extends JToolBar implements ActionListener {
 	private JButton ordersButton;
 	private JButton clientsButton;
 	private JButton productsButton;
+	private JButton statsButton;
 	private ToolbarListener toolbarListener;
 
 	public Toolbar() {
@@ -24,15 +25,17 @@ public class Toolbar extends JToolBar implements ActionListener {
 		ordersButton = new JButton("Orders");
 		clientsButton = new JButton("Clients");
 		productsButton = new JButton("Products");
+		statsButton = new JButton("Statistics");
 
 		add(ordersButton);
 		add(clientsButton);
 		add(productsButton);
-		
+		add(statsButton);
+
 		ordersButton.addActionListener(this);
 		clientsButton.addActionListener(this);
 		productsButton.addActionListener(this);
-		
+		statsButton.addActionListener(this);
 
 	}
 
@@ -58,20 +61,25 @@ public class Toolbar extends JToolBar implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		JButton clicked = (JButton) e.getSource();
-		
+
 		if (clicked == ordersButton) {
-			
+
 			if (toolbarListener != null) {
 				toolbarListener.orders();
-				
+
 			}
 		} else if (clicked == productsButton) {
 			if (toolbarListener != null) {
 				toolbarListener.products();
 			}
-		} else if (clicked == clientsButton){
+		} else if (clicked == clientsButton) {
 			if (toolbarListener != null) {
 				toolbarListener.clients();
+			}
+		} else if (clicked == statsButton) {
+			if (toolbarListener != null) {
+				toolbarListener.stats();
+
 			}
 		}
 	}

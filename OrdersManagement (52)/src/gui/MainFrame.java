@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import controller.Controller;
@@ -64,19 +65,16 @@ public class MainFrame extends JFrame {
 	private MostProfitTable mostProfitTable;
 	private JTabbedPane clientTabbedPane;
 	private AverageClientTable averageClientTable;
+	private StatisticsPanel statsPanel;
 
 	public MainFrame() {
 		super("Orders Management");
-		
-		 try {
-	            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-		
-		
-		
-		
+
+		try {
+			UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		Dimension dim = getPreferredSize();
 		dim.width = 1000;
@@ -95,6 +93,17 @@ public class MainFrame extends JFrame {
 		mostProfitTable = new MostProfitTable();
 		averageClientTable = new AverageClientTable();
 		
+		//Statistics panel in different thread
+		SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+            	statsPanel= new StatisticsPanel();
+            	System.out.println("invoke");
+                
+                
+            }
+        });
+
 		clientTabbedPane = new JTabbedPane();
 		clientTabbedPane.addTab("Clients", clientTablePanel);
 		clientTabbedPane.addTab("Most profitable clients", mostProfitTable);
@@ -120,8 +129,6 @@ public class MainFrame extends JFrame {
 		productTablePanel.setDataProduct(controller.getProduct());
 		mostProfitTable.setDataClient(controller.getMostProfitClients());
 		averageClientTable.setDataClient(controller.getAverageClients());
-		
-		
 
 		// This is important
 		pref = Preferences.userRoot().node("db");
@@ -179,12 +186,12 @@ public class MainFrame extends JFrame {
 				tablePanel.refresh();
 			}
 		});
-		
-		productPanel.setListener(new ProductListener(){
-			
+
+		productPanel.setListener(new ProductListener() {
+
 			@Override
 			public void productAdded(ProductEvent e) {
-			
+
 				try {
 					controller.saveProduct(e);
 					controller.loadProducts();
@@ -194,7 +201,7 @@ public class MainFrame extends JFrame {
 				}
 				productTablePanel.refresh();
 			}
-			
+
 		});
 
 		clientPanel.setListener(new ClientListener() {
@@ -222,13 +229,18 @@ public class MainFrame extends JFrame {
 			@Override
 			public void orders() {
 
-				if (splitPaneClient!= null) {
-				getContentPane().remove(splitPaneClient);
+				if (splitPaneClient != null) {
+					getContentPane().remove(splitPaneClient);
 				}
 				if (splitPaneProduct != null) {
-				getContentPane().remove(splitPaneProduct);
+					getContentPane().remove(splitPaneProduct);
 				}
 				
+
+				if (statsPanel != null) {
+					getContentPane().remove(statsPanel);
+				}
+
 				add(splitPane, BorderLayout.CENTER);
 				validate();
 				repaint();
@@ -243,6 +255,11 @@ public class MainFrame extends JFrame {
 				if (splitPaneProduct != null) {
 					getContentPane().remove(splitPaneProduct);
 				}
+				
+
+				if (statsPanel != null) {
+					getContentPane().remove(statsPanel);
+				}
 
 				add(splitPaneClient, BorderLayout.CENTER);
 				validate();
@@ -252,13 +269,35 @@ public class MainFrame extends JFrame {
 			@Override
 			public void products() {
 				if (splitPane != null) {
-				getContentPane().remove(splitPane);
+					getContentPane().remove(splitPane);
+				}
+
+				if (splitPaneClient != null) {
+					getContentPane().remove(splitPaneClient);
 				}
 				
-				if (splitPaneClient != null) {
-				getContentPane().remove(splitPaneClient);
+				if (statsPanel != null) {
+					getContentPane().remove(statsPanel);
 				}
+				
 				add(splitPaneProduct, BorderLayout.CENTER);
+				validate();
+				repaint();
+			}
+
+			@Override
+			public void stats() {
+				if (splitPane != null) {
+					getContentPane().remove(splitPane);
+				}
+
+				if (splitPaneClient != null) {
+					getContentPane().remove(splitPaneClient);
+				}
+				if (splitPaneClient != null) {
+					getContentPane().remove(splitPaneProduct);
+				}
+				add(statsPanel, BorderLayout.CENTER);
 				validate();
 				repaint();
 			}
@@ -385,7 +424,7 @@ public class MainFrame extends JFrame {
 			controller.loadProducts();
 			controller.loadMostProfitClients();
 			controller.loadAverageClients();
-			//System.out.println(controller.getMostProfitClients());
+			// System.out.println(controller.getMostProfitClients());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
