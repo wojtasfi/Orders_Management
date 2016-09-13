@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,10 +20,10 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import controller.Controller;
@@ -82,6 +83,7 @@ public class MainFrame extends JFrame {
 		setMinimumSize(dim);
 
 		toolbar = new Toolbar();
+		
 		formPanel = new FormPanel();
 		fileChooser = new JFileChooser();
 		tablePanel = new TablePanel();
@@ -93,16 +95,12 @@ public class MainFrame extends JFrame {
 		mostProfitTable = new MostProfitTable();
 		averageClientTable = new AverageClientTable();
 		
+		JPanel cards = new JPanel();
+		
 		//Statistics panel in different thread
-		SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-            	statsPanel= new StatisticsPanel();
-            	System.out.println("invoke");
-                
-                
-            }
-        });
+		
+         statsPanel= new StatisticsPanel();
+         
 
 		clientTabbedPane = new JTabbedPane();
 		clientTabbedPane.addTab("Clients", clientTablePanel);
@@ -224,89 +222,70 @@ public class MainFrame extends JFrame {
 			}
 
 		});
+		
+		
 		toolbar.setToolbarListener(new ToolbarListener() {
 
 			@Override
 			public void orders() {
-
-				if (splitPaneClient != null) {
-					getContentPane().remove(splitPaneClient);
-				}
-				if (splitPaneProduct != null) {
-					getContentPane().remove(splitPaneProduct);
-				}
+				/*
+				splitPaneClient.setVisible(false);
+				splitPaneProduct.setVisible(false);
+				splitPane.setVisible(true);
+				statsPanel.setVisible(false);
+				*/
+				
+				CardLayout cl = (CardLayout)(cards.getLayout());
+			    cl.show(cards, "Orders");
 				
 
-				if (statsPanel != null) {
-					getContentPane().remove(statsPanel);
-				}
-
-				add(splitPane, BorderLayout.CENTER);
-				validate();
-				repaint();
 			}
 
 			@Override
 			public void clients() {
+				CardLayout cl = (CardLayout)(cards.getLayout());
+			    cl.show(cards, "Clients");
 
-				if (splitPane != null) {
-					getContentPane().remove(splitPane);
-				}
-				if (splitPaneProduct != null) {
-					getContentPane().remove(splitPaneProduct);
-				}
-				
-
-				if (statsPanel != null) {
-					getContentPane().remove(statsPanel);
-				}
-
-				add(splitPaneClient, BorderLayout.CENTER);
-				validate();
-				repaint();
 			}
 
 			@Override
 			public void products() {
-				if (splitPane != null) {
-					getContentPane().remove(splitPane);
-				}
-
-				if (splitPaneClient != null) {
-					getContentPane().remove(splitPaneClient);
-				}
 				
-				if (statsPanel != null) {
-					getContentPane().remove(statsPanel);
-				}
+				CardLayout cl = (CardLayout)(cards.getLayout());
+			    cl.show(cards, "Products");
 				
-				add(splitPaneProduct, BorderLayout.CENTER);
-				validate();
-				repaint();
 			}
 
 			@Override
 			public void stats() {
-				if (splitPane != null) {
-					getContentPane().remove(splitPane);
-				}
-
-				if (splitPaneClient != null) {
-					getContentPane().remove(splitPaneClient);
-				}
-				if (splitPaneClient != null) {
-					getContentPane().remove(splitPaneProduct);
-				}
-				add(statsPanel, BorderLayout.CENTER);
-				validate();
-				repaint();
+				
+				CardLayout cl = (CardLayout)(cards.getLayout());
+			    cl.show(cards, "Stats");
 			}
 
 		});
 
 		setLayout(new BorderLayout());
-
-		add(splitPane, BorderLayout.CENTER);
+		
+		
+		
+		//splitPane.setVisible(false);
+		
+		
+		
+		
+		cards.setLayout(new CardLayout());
+			cards.add(splitPaneProduct, "Products");
+			
+			cards.add(statsPanel, "Stats");
+			
+			cards.add(splitPaneClient, "Clients");
+	
+			cards.add(splitPane, "Orders");
+		
+		
+		
+		add(cards,BorderLayout.CENTER);
 
 		add(toolbar, BorderLayout.NORTH);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

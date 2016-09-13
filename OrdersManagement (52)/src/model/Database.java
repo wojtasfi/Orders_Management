@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javafx.collections.ObservableList;
+
 // This is the class which we are going to connect to database and exchange data (this is the root data)
 //conntec(), disconnect(), save(), load()
 public class Database {
@@ -24,12 +26,16 @@ public class Database {
 	private List<Product> products;
 	private List<MostProfitClients> mostProfitClients;
 	private List<MostProfitClients> averageClients;
+	//private StatisticsData statData;
 
 	// Ładuje sql który łączy to wszystko, ale zapisuje tylko do tabeli 'orders'
 
 	public List<MostProfitClients> getMostProfitClients() {
 		return mostProfitClients;
 	}
+
+	
+	
 
 	public List<MostProfitClients> getAverageClients() {
 		return averageClients;
@@ -108,11 +114,11 @@ public class Database {
 
 	}
 
-	public void connect() throws Exception {
+	public Connection connect() throws Exception {
 
 		// return pozwala na wyjście z metody
 		if (con != null)
-			return;
+			return con;
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -122,6 +128,8 @@ public class Database {
 
 		String Url = "jdbc:mysql://localhost:3306/OrdersManagement";
 		con = DriverManager.getConnection(Url, "root", "pollop123");
+		
+		return con;
 
 	}
 
@@ -196,13 +204,16 @@ public class Database {
 
 	}
 
-	public Database() {
+	public Database()  {
 		order = new LinkedList<Order>();
 		orders = new LinkedList<Orders>();
 		clients = new LinkedList<Client>();
 		products = new LinkedList<Product>();
 		mostProfitClients = new LinkedList<MostProfitClients>();
 		averageClients = new LinkedList<MostProfitClients>();
+		//statData = new StatisticsData();
+		
+		
 
 	}
 
@@ -295,5 +306,18 @@ public class Database {
 
 		insertStmt.executeUpdate();
 	}
+
+	/*
+	public void buildData() {
+		// TODO Auto-generated method stub
+		statData.buildData();
+	}
+
+	public ObservableList getChartData() {
+		return statData.getData();
+		
+	}
+	
+	*/
 
 }

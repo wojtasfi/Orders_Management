@@ -8,16 +8,21 @@ import java.util.List;
 import gui_clients.ClientEvent;
 import gui_orders.FormEvent;
 import gui_products.ProductEvent;
+import javafx.collections.ObservableList;
 import model.Client;
 import model.Database;
 import model.MostProfitClients;
 import model.Order;
 import model.Orders;
 import model.Product;
+import model.StatisticsData;
 
 public class Controller {
 
+	StatisticsData statData = new StatisticsData();
 	Database db = new Database();
+	
+	
 
 	public List<Orders> getPeople() {
 		return db.getOrders();
@@ -118,6 +123,13 @@ public class Controller {
 	public void loadAverageClients() throws SQLException {
 		db.loadAverageClients();
 		
+	}
+
+	
+
+	public ObservableList getChartData() {
+		
+		return statData.getChartData();
 	}
 	
 	
